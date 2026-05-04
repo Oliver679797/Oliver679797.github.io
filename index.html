@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weblap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+ 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #007bff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+ 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .custom-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 80px;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+ 
+        .custom-button:hover {
+            transform: translateY(-5px);
+            background: #ffffff;
+            border-color: #000000;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+ 
+        .cv-button {
+            background: #000000;
+            color: #ffffff;
+            grid-column: span 2;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+ 
+        .cv-button:hover {
+            background: #1a1a1a;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+ 
+        @media (min-width: 1024px) {
+            .cv-button {
+                grid-column: span 4;
+            }
+        }
+ 
+        /* PDF Viewer Modal */
+        #pdf-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+ 
+        .modal-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 90vh;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+ 
+        #pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+ 
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1001;
+        }
+ 
+        .close-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="glass-card p-6 md:p-12 w-full max-w-5xl">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-2 text-white">Morva Olivér</h1>
+            <p class="text-blue-100 opacity-90 font-medium">Kattintson egy elemre a dokumentum megtekintéséhez</p>
+        </div>
+ 
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <button onclick="viewPDF('meresi_jegyzokonyv.pdf', 'Mérési jegyzőkönyv')" class="custom-button">Mérési jegyzőkönyv</button>
+            <button onclick="viewPDF('elektronika.pdf', 'Elektronika')" class="custom-button">Elektronika</button>
+            <button onclick="viewPDF('halozat_kezeles.pdf', 'Hálózat kezelés')" class="custom-button">Hálózat kezelés</button>
+            <button onclick="viewPDF('programozas_alapjai.pdf', 'Programozás alapjai')" class="custom-button">Programozás alapjai</button>
+            <button onclick="viewPDF('adatbazis_kezeles.pdf', 'Adatbázis kezelés')" class="custom-button">Adatbázis kezelés</button>
+            <button onclick="viewPDF('mikrovezerlo_prog.pdf', 'Mikrovezérlő prog.')" class="custom-button">Mikrovezérlő prog.</button>
+            <button onclick="viewPDF('plc_programozas.pdf', 'PLC programozás')" class="custom-button">PLC programozás</button>
+            <button onclick="viewPDF('szamitogepes_szim.pdf', 'Számítógépes szim.')" class="custom-button">Számítógépes szim.</button>
+            <button onclick="viewPDF('digitalis_aramkorok.pdf', 'Digitális áramkörök')" class="custom-button">Digitális áramkörök</button>
+            <button onclick="viewPDF('iot_rendszerek.pdf', 'IoT rendszerek')" class="custom-button">IoT rendszerek</button>
+            <button onclick="viewPDF('programfejlesztes.pdf', 'Programfejlesztés')" class="custom-button">Programfejlesztés</button>
+            <button onclick="viewPDF('munkavalaloi_angol.pdf', 'Munkaválalói Angol')" class="custom-button">Munkaválalói ang</button>
+		
+ 
+            <button onclick="viewPDF('oneletrajz.pdf', 'Önéletrajz')" class="custom-button cv-button mt-4">
+                Önéletrajz
+            </button>
+        </div>
+    </div>
+ 
+    <!-- PDF Nézegető Modal -->
+    <div id="pdf-modal">
+        <div class="modal-container">
+            <div class="bg-gray-100 p-3 border-b flex justify-between items-center">
+                <span id="pdf-title" class="font-bold text-gray-800">Dokumentum</span>
+                <button onclick="closePDF()" class="bg-red-500 text-white px-4 py-1 rounded font-bold hover:bg-red-600 transition">Bezárás</button>
+            </div>
+            <iframe id="pdf-frame" src=""></iframe>
+        </div>
+    </div>
+ 
+    <script>
+        function viewPDF(fileUrl, title) {
+            const modal = document.getElementById('pdf-modal');
+            const iframe = document.getElementById('pdf-frame');
+            const titleSpan = document.getElementById('pdf-title');
+ 
+            // Beállítjuk a címet és a forrást
+            titleSpan.innerText = title;
+            iframe.src = fileUrl;
+            
+            // Megjelenítjük a modalt
+            modal.style.display = 'flex';
+            
+            // Megakadályozzuk a görgetést a háttérben
+            document.body.style.overflow = 'hidden';
+        }
+ 
+        function closePDF() {
+            const modal = document.getElementById('pdf-modal');
+            const iframe = document.getElementById('pdf-frame');
+ 
+            // Elrejtjük a modalt és töröljük a forrást (hogy leálljon a betöltés)
+            modal.style.display = 'none';
+            iframe.src = "";
+            
+            // Visszaállítjuk a görgetést
+            document.body.style.overflow = 'auto';
+        }
+ 
+        // Bezárás ESC billentyűre
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePDF();
+        });
+ 
+        // Bezárás a modal mellé kattintva
+        document.getElementById('pdf-modal').addEventListener('click', function(e) {
+            if (e.target === this) closePDF();
+        });
+    </script>
+</body>
+</html>
+ 
